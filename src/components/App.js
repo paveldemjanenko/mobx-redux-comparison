@@ -1,54 +1,20 @@
 import React from "react";
 import Form from "./Form";
 import Image from "./Image";
-import axios from "axios";
+import { connect } from "react-redux";
+import { fetchImages } from '../actions';
 
-export default class App extends React.Component {
-  state = {
-    term: "",
-    images: [],
-    status: "initial"
-  };
-
-  componentDidMount() {
-    this.fetchImages("Mountains");
+class App extends React.Component {
+  componentWillMount() {
+    this.props.fetchImages("Mountains");
   }
 
-  fetchImages = async term => {
-    this.setState({
-      status: "searching",
-      term: term,
-      images: []
-    });
-
-    try {
-      const response = await axios.get(
-        "https://api.unsplash.com/search/photos",
-        {
-          params: {
-            client_id:
-              "0414177cd359277e26787c56c0c8a99046dc991c1f92d609383621b305bee317",
-            query: term
-          }
-        }
-      );
-      this.setState({
-        status: "done",
-        images: response.data.results
-      });
-    } catch (error) {
-      this.setState({
-        status: "error"
-      });
-    }
-  };
-
 render() {
-  const { term, status, images } = this.state;
+  const { term, status, images } = this.props;
 
   return (
     <div className="App">
-      <Form fetchImages={this.fetchImages} />
+      <Form />
 
       {status === "searching" && <h3>Searching for {term}</h3>}
       {status === "done" &&
@@ -69,3 +35,21 @@ render() {
   );
 }
 }
+
+const mapStateToProps = state => {
+  return {
+    term: state.term,
+    images: state.images,
+    status: state.status
+  };
+};
+
+const mapDispatchToProps = dispatch => {
+  return {
+    fetchImages: term => {
+      dispatch(fetchImages(term));
+    }
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(App);

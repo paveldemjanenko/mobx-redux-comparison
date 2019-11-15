@@ -1,7 +1,9 @@
 import React from "react";
 import PropTypes from "prop-types";
+import { connect } from 'react-redux';
+import { fetchImages } from '../actions';
 
-export default class Form extends React.Component {
+class Form extends React.Component {
     static propTypes = {
         fetchImages: PropTypes.func.isRequired
     };
@@ -27,3 +29,15 @@ export default class Form extends React.Component {
         );
     }
 }
+
+const mapStateToProps = state => ({});
+  
+  const mapDispatchToProps = dispatch => {
+    return {
+        fetchImages: term => {
+        dispatch(fetchImages(term));
+      }
+    };
+  };
+
+export default connect(mapStateToProps, mapDispatchToProps)(Form);
