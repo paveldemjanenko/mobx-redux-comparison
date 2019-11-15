@@ -1,15 +1,12 @@
 import React from "react";
-import PropTypes from "prop-types";
+import { inject, observer } from "mobx-react";
 
-export default class Form extends React.Component {
-    static propTypes = {
-        fetchImages: PropTypes.func.isRequired
-    };
+class Form extends React.Component {
 
     onSubmit = e => {
         e.preventDefault();
         const term = this.input.value;
-        this.props.fetchImages(term);
+        this.props.galleryStore.fetchImages(term);
     };
 
     render() {
@@ -27,3 +24,5 @@ export default class Form extends React.Component {
         );
     }
 }
+
+export default inject("galleryStore")(observer(Form));

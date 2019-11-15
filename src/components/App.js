@@ -1,54 +1,20 @@
 import React from "react";
 import Form from "./Form";
 import Image from "./Image";
-import axios from "axios";
+import { inject, observer } from 'mobx-react';
 
-export default class App extends React.Component {
-  state = {
-    term: "",
-    images: [],
-    status: "initial"
-  };
+class App extends React.Component {
 
   componentDidMount() {
-    this.fetchImages("Mountains");
+    this.props.galleryStore.fetchImages("Motorcycles");
   }
 
-  fetchImages = async term => {
-    this.setState({
-      status: "searching",
-      term: term,
-      images: []
-    });
-
-    try {
-      const response = await axios.get(
-        "https://api.unsplash.com/search/photos",
-        {
-          params: {
-            client_id:
-              "0414177cd359277e26787c56c0c8a99046dc991c1f92d609383621b305bee317",
-            query: term
-          }
-        }
-      );
-      this.setState({
-        status: "done",
-        images: response.data.results
-      });
-    } catch (error) {
-      this.setState({
-        status: "error"
-      });
-    }
-  };
-
 render() {
-  const { term, status, images } = this.state;
+  const { term, status, images } = this.props.galleryStore;
 
   return (
     <div className="App">
-      <Form fetchImages={this.fetchImages} />
+      <Form />
 
       {status === "searching" && <h3>Searching for {term}</h3>}
       {status === "done" &&
@@ -69,3 +35,4 @@ render() {
   );
 }
 }
+export default inject("galleryStore")(observer(App));
